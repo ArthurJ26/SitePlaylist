@@ -1,44 +1,28 @@
 <?php
-
 session_start();
-
 include 'conexao.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
+$email = $_POST['email'];
+$senha = $_POST['senha'];
 
-    $sql = "SELECT id, nome, senha FROM usuarios WHERE email = ?";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
+$sql = "SELECT * FROM usuarios WHERE email = ? AND senha = ?";
+$stmt = $conexao->prepare($sql);
+$stmt->bind_param("ss", $email, $senha);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    if ($resultado->num_rows > 0) {
-        $usuario = $resultado->fetch_assoc();
+if ($result->num_rows === 1) {
+    $user = $result->fetch_assoc();
 
-        if ($senha === $usuario['senha']) {
+    $_SESSION['usuario_id'] = $user['id'];
+    $_SESSION['usuario_nome'] = $user['nome'];
+    $_SESSION['is_admin'] = $user['is_admin']; 
 
-            $_SESSION['usuario_id'] = $usuario['id'];
-            $_SESSION['usuario_nome'] = $usuario['nome'];
-
-            header("Location: ../front-end/paginaprincipal.php");
-            exit();
-        } else {
-            header("Location: ../index.php?erro=senha_incorreta");
-            exit();
-        }
-    } else {
-        header("Location: ../index.php?erro=email_nao_encontrado");
-        exit();
-    }
-
-    $stmt->close();
-    $conexao->close();
+    header("Location: ../front-end/paginaprincipal.php");
+    exit(); 
 } else {
-    echo "Método de requisição inválido.";
+
+    header("Location: login.php?error=Credenciais inválidas");
+    exit();
 }
 ?>
-
-

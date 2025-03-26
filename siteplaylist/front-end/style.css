@@ -61,6 +61,7 @@ input, button {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    margin: 10px;
 }
 .video-info a {
     color: #0073e6;
@@ -105,7 +106,7 @@ input, button {
     margin-top: 150px;
 }
 
-/* ------------- */
+
 .flex {
     display: flex;
     align-items: center;

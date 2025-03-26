@@ -55,6 +55,3 @@ window.addEventListener("scroll", function(){
     header.classList.toggle('rolagem', window.scrollY > 80)
 })
 
-
-    
-

@@ -10,6 +10,7 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 $usuario_id = $_SESSION['usuario_id'];
+$is_admin = $_SESSION['is_admin'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);
@@ -28,20 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         echo json_encode(["error" => "Dados inválidos"]);
     }
-    exit(); 
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $sql = "SELECT * FROM videos WHERE usuario_id = $usuario_id";
+    if ($is_admin) {
+
+        $sql = "SELECT videos.*, usuarios.nome as usuario_nome FROM videos 
+                JOIN usuarios ON videos.usuario_id = usuarios.id";
+    } else {
+
+        $sql = "SELECT * FROM videos WHERE usuario_id = $usuario_id";
+    }
     $result = $conexao->query($sql);
 
     $videos = [];
     while ($row = $result->fetch_assoc()) {
         $videos[] = $row;
     }
-
     echo json_encode($videos);
-    exit();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($data['video_id'], $data['new_video_url'], $data['new_thumbnail_url'])) {
@@ -56,10 +61,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($data['video_id'], $data['new
     } else {
         echo json_encode(["error" => "Erro ao atualizar o vídeo: " . $conexao->error]);
     }
-    exit();
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_admin) {
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    if (isset($data['nome']) && isset($data['email']) && isset($data['senha'])) {
+        $nome = $conexao->real_escape_string($data['nome']);
+        $email = $conexao->real_escape_string($data['email']);
+        $senha = password_hash($data['senha'], PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO usuarios (nome, email, senha) VALUES ('$nome', '$email', '$senha')";
+        
+        if ($conexao->query($sql) === TRUE) {
+            echo json_encode(["message" => "Usuário cadastrado com sucesso"]);
+        } else {
+            echo json_encode(["error" => "Erro ao cadastrar usuário: " . $conexao->error]);
+        }
+    } else {
+        echo json_encode(["error" => "Dados inválidos"]);
+    }
+}
 
 $conexao->close();
-
 ?>
+

@@ -6,7 +6,12 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom right, red 0%, pink 70%, white 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)), 
+            url('../img/background.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
     display: flex;
     height: 100vh;
     flex-direction: column;
@@ -22,7 +27,6 @@ form {
 }
 
 form a {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
     text-align: center;
 }
 
@@ -40,5 +44,6 @@ input, button {
     border-width: 0.5px;
 }
 
-
-  
+label {
+    color: #ffffff; 
+}

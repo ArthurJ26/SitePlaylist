@@ -31,6 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 $sql = "SELECT * FROM videos WHERE usuario_id = $usuario_id";
 $result = $conexao->query($sql);
+
+$is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'];
 ?>
 
 <!DOCTYPE html>
@@ -52,6 +54,12 @@ $result = $conexao->query($sql);
                         <div class="options">
                             <li><a href="../back-end/logout.php">Sair</a></li>
                             <li><a href="editar_perfil.php">Alterar Perfil</a></li>
+                            <?php if ($is_admin): ?>
+                                <li><a href="cadastro_usuario.php">Cadastrar Novo Usuário</a></li>
+                                <li><a href="historico_videos.php">Ver Histórico de Vídeos</a></li>
+                                <li><a href="gerenciar_usuarios.php">Gerenciar Usuarios</a></li>
+                            <?php endif; ?>
+
                         </div>
                     </ul>
                 </nav>
